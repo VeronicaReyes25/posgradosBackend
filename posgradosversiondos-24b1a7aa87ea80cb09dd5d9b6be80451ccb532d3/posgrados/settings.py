@@ -25,7 +25,7 @@ SECRET_KEY = '8w=$(8g76!t8=^mctv_kuqzx^$mh-4c01cxx0%*sryn3wja12i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['posgradosversiondos.herokuapp.com', '127.0.0.1', '127.0.0.1:4200', 'localhost:4200']
+ALLOWED_HOSTS = ['posgradoscchh.herokuapp.com', '127.0.0.1', '127.0.0.1:4200', 'localhost:4200']
 
 #CLOUDINARY = {
 #  'cloud_name': 'ddjmdjmvk',  

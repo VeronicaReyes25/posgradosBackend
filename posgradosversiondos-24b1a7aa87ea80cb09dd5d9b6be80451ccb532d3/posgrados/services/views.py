@@ -291,17 +291,10 @@ def agendarCita(request):
 
 @api_view(['GET'])
 @permission_classes((AllowAny, ))
-def obtenerCitasMes(request, mes, anio):
+def obtenerCitasMes(request, anio):
     data=[]
-    an=int(anio)
-    strmes=str(mes)
-    diaFIn={'1':31,'2':28,'3':31,'4':30,'5':31,'6':30,'7':31,'8':31,'9':30,'10':31,'11':30,'12':31,'2b':29}
-    if(an % 4 == 0 and an % 100 != 0 or an % 400 == 0):
-        fin='2b'
-        dFin=diaFIn[fin]
-    dFin=diaFIn[strmes]
-    start_date = datetime.date(int(anio), int(mes), 1)
-    end_date = datetime.date(int(anio), int(mes), int(dFin))
+    start_date = datetime.date(int(anio), 1, 1)
+    end_date = datetime.date(int(anio), 12, 31)
     citas=Cita.objects.filter(fecha_hora_inicio__range=(start_date, end_date),cancelado=False)
     for cita in citas:
         cit ={
@@ -460,3 +453,72 @@ def entidades(request, idCargo):
         usuarios.append(user)
     content = {'usuarios':usuarios}
     return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes((AllowAny, ))
+def obtenerCitasMesEstudiantes(request, anio, idEstudiante):
+    try:
+        u=User.objects.get(id=idEstudiante)
+        data=[]
+        
+        start_date = datetime.date(int(anio), 1, 1)
+        end_date = datetime.date(int(anio), 12, 31)
+        citas=Cita.objects.filter(fecha_hora_inicio__range=(start_date, end_date),cancelado=False, id_user_para=u)
+        for cita in citas:
+            cit ={
+                'id':cita.id_cita,
+                'title':cita.titulo,
+                'start':cita.fecha_hora_inicio,
+                'end':cita.fecha_hora_fin
+            }
+            data.append(cit)
+        content = {"citas": data}
+        return Response(content, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        content = {"mensaje": 'usuario no existe'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes((AllowAny, ))
+def obtenerCitasMesAdmin(request, anio, uadmin):
+    data=[]
+    an=int(anio)
+    
+    start_date = datetime.date(int(anio), 1, 1)
+    end_date = datetime.date(int(anio), 12, 31)
+    
+    try:
+        u=User.objects.get(id=uadmin)
+
+        grupos = {'1':'comunicaciones','2':'secretaria'}
+        g=grupos[str(uadmin)]
+
+        if (g=="comunicaciones"):
+            citas=Cita.objects.filter(fecha_hora_inicio__range=(start_date, end_date),cancelado=False).exclude(id_user_para=1)
+            for cita in citas:
+                cit ={
+                    'id':cita.id_cita,
+                    'title':cita.titulo,
+                    'start':cita.fecha_hora_inicio,
+                    'end':cita.fecha_hora_fin
+                }
+                data.append(cit)
+            
+            content = {"citas": data}
+            return Response(content, status=status.HTTP_200_OK)
+        else:
+            citas=Cita.objects.filter(fecha_hora_inicio__range=(start_date, end_date),cancelado=False, id_user_para=1)
+            for cita in citas:
+                cit ={
+                    'id':cita.id_cita,
+                    'title':cita.titulo,
+                    'start':cita.fecha_hora_inicio,
+                    'end':cita.fecha_hora_fin
+                }
+                data.append(cit)
+            
+            content = {"citas": data}
+            return Response(content, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        content = {"mensaje": 'usuario no existe'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)

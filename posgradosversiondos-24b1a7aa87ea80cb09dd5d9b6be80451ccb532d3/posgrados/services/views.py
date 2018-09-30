@@ -427,7 +427,8 @@ def citasProximas(request):
             'evento':cita.titulo,
             'descripcion':cita.descripcion,
             'FechaHoraInicio':cita.fecha_hora_inicio,
-            'FechaHoraFin':cita.fecha_hora_fin
+            'FechaHoraFin':cita.fecha_hora_fin,
+            'lugar':cita.lugar
         }
         data.append(c)
     content = {'citas':data}
@@ -522,3 +523,29 @@ def obtenerCitasMesAdmin(request, anio, uadmin):
     except User.DoesNotExist:
         content = {"mensaje": 'usuario no existe'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes((AllowAny, ))
+def obtenerCitasMesYear(request, mes, anio):
+    data=[]
+    an=int(anio)
+    strmes=str(mes)
+    diaFIn={'1':31,'2':28,'3':31,'4':30,'5':31,'6':30,'7':31,'8':31,'9':30,'10':31,'11':30,'12':31,'2b':29}
+    if(an % 4 == 0 and an % 100 != 0 or an % 400 == 0):
+        fin='2b'
+        dFin=diaFIn[fin]
+    dFin=diaFIn[strmes]
+    start_date = datetime.date(int(anio), int(mes), 1)
+    end_date = datetime.date(int(anio), int(mes), int(dFin))
+    citas=Cita.objects.filter(fecha_hora_inicio__range=(start_date, end_date),cancelado=False)
+    for cita in citas:
+        cit ={
+            'id':cita.id_cita,
+            'title':cita.titulo,
+            'start':cita.fecha_hora_inicio,
+            'end':cita.fecha_hora_fin
+        }
+        data.append(cit)
+    
+    content = {"citas": data}
+    return Response(content, status=status.HTTP_200_OK)

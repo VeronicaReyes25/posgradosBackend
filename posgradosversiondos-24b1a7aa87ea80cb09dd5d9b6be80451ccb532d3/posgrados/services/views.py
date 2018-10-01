@@ -349,6 +349,24 @@ def editarCita(request, idCita):
     data = json.loads(request.body)
     try:
         c=Cita.objects.get(id_cita=idCita)
+
+        if (data["evento"] is None):
+            data["evento"]=c.titulo
+        if (data["descripcion"] is None):
+            data["descripcion"]=c.descripcion
+        if (data["lugar"] is None):
+            data["lugar"]=c.lugar
+        if (data["diaCompleto"] is None):
+            data["diaCOmpleto"]=c.diaCompleto
+        if (data["FechaHoraInicio"] is None):
+            data["FechaHoraInicio"]=c.fecha_hora_inicio
+        if (data["FechaHoraFin"] is None):
+            data["FechaHoraFin"]=c.fecha_hora_fin
+        if (data["citaPara"] is None):
+            data["citaPara"]=c.fecha_hora_fin
+        if (data["citaCon"] is None):
+            data["citaCon"]=c.fecha_hora_fin
+
         evento =data["evento"]
         descripcion=data["descripcion"]
         lugar=data["lugar"]
@@ -402,6 +420,7 @@ def editarCita(request, idCita):
     except Cita.DoesNotExist:
         content = {"mensaje": "La cita no existe"}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view(['GET'])
 @permission_classes((AllowAny, ))

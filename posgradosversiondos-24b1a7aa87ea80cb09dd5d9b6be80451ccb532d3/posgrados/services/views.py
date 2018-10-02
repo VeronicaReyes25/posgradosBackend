@@ -319,6 +319,7 @@ def detalleCita(request, idCita):
             'descripcion':cita.descripcion,
             'fechaHorainicio':cita.fecha_hora_inicio,
             'fechaHorafin':cita.fecha_hora_fin,
+            'diaCompleto':cita.dia_completo,
             'lugar':cita.lugar,
             'citaPara':cita.id_user_para.username,
             'citaCon':cita.id_user_con.username,

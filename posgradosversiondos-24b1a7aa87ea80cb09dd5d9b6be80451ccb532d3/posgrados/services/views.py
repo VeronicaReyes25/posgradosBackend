@@ -317,10 +317,12 @@ def detalleCita(request, idCita):
         cita ={
             'evento':cita.titulo,
             'descripcion':cita.descripcion,
-            'fechaHorainicio':cita.fecha_hora_inicio,
-            'fechaHorafin':cita.fecha_hora_fin,
-            'diaCompleto':cita.dia_completo,
+            'fechaInicio':cita.fecha_hora_inicio.strftime("%Y-%m-%d"),
+            'horaInicio':cita.fecha_hora_inicio.strftime("%H:%M"),
+            'fechaFin':cita.fecha_hora_fin.strftime("%Y-%m-%d"),
+            'horaFin':cita.fecha_hora_fin.strftime("%H:%M"),
             'lugar':cita.lugar,
+            'diaCompleto':cita.dia_completo,
             'citaPara':cita.id_user_para.username,
             'citaCon':cita.id_user_con.username,
             'cancelado':cita.cancelado
